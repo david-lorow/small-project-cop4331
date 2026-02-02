@@ -1,29 +1,38 @@
+
 <?php
+
 $inData = getRequestInfo();
-
-
-//My philosophy is to put the unhappy paths in if, and continue otherwise
-if (!$inData || empty($inData["login"]) || empty($inData["Password"])) {
-    returnWithError("Missing login or password");
+if (!$inData || empty($inData["FirstName"]) || empty($inData["LastName"]) || empty($inData["email"]) || empty($inData["Password"])) {
+    returnWithError("Missing registration information", 400);
 }
 
 $conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
-
 if ($conn->connect_error) {
     returnWithError($conn->connect_error, 500);//General error
 }
 
-$stmt = $conn->prepare("SELECT ID, FirstName, LastName FROM Users WHERE Login=? AND Password=?");
+$login = $inData["email"];//Email from registration becomes login username
+
+//Test for existing user
+$stmt = $conn->prepare("SELECT ID, FirstName, LastName FROM Users WHERE Login=?");
 if (!$stmt) returnWithError($conn->error, 500);
-$stmt->bind_param("ss", $inData["login"], $inData["Password"]);
+$stmt->bind_param("s", $login);
 $stmt->execute();
 $result = $stmt->get_result();
-
-if (!($row = $result->fetch_assoc())) {
-    returnWithError("Invalid login or password", 401);
+if($result->fetch_assoc()) {
+    returnWithError("Login already exists", 409);
 }
 
-returnWithInfo($row["FirstName"], $row["LastName"], $row["ID"]);
+//Insert new user
+$stmt = $conn->prepare("INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)");
+if (!$stmt) returnWithError($conn->error, 500);
+$stmt->bind_param("ssss", $inData["FirstName"], $inData["LastName"], $login, $inData["Password"]);
+if(!$stmt->execute()) {
+    returnWithError($stmt->error,500);
+}
+
+$newId = $conn->insert_id;
+returnWithInfo($inData["FirstName"], $inData["LastName"], $newId);
 
 
 //Given functions
@@ -38,7 +47,6 @@ function sendResultInfoAsJson($obj) {
 
 function returnWithError($err, $code = 400) {//Bad request as default
     http_response_code($code);
-    //$retValue = '{"id":0,"FirstName":"","LastName":"","error":"' . $err . '"}'; names with quotes can break it
 	sendResultInfoAsJson(json_encode([
         "id" => 0,
         "FirstName" => "",
@@ -58,4 +66,5 @@ function returnWithInfo($FirstName, $LastName, $id) {
     ]));
     exit;//No need to continue
 }
+	
 
