@@ -74,3 +74,15 @@ button {
     margin-bottom: 15px;
     margin-left: 6px;
 }
+
+button:hover {
+    background-color: #DDDD20;
+}
+
+a {
+    color: blue
+}
+
+a:hover {
+    color: darkblue
+}
