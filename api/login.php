@@ -1,54 +1,60 @@
-
 <?php
+$inData = getRequestInfo();
 
-	$inData = getRequestInfo();
-	
-	$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331"); 	
-	if( $conn->connect_error )
-	{
-		returnWithError( $conn->connect_error );
-	}
-	else
-	{
-		$stmt = $conn->prepare("SELECT ID,firstName,lastName FROM Users WHERE Login=? AND Password =?");
-		$stmt->bind_param("ss", $inData["login"], $inData["password"]);
-		$stmt->execute();
-		$result = $stmt->get_result();
 
-		if( $row = $result->fetch_assoc()  )
-		{
-			returnWithInfo( $row['firstName'], $row['lastName'], $row['ID'] );
-		}
-		else
-		{
-			returnWithError("No Records Found");
-		}
+//My philosophy is to put the unhappy paths in if, and continue otherwise
+if (!$inData || empty($inData["login"]) || empty($inData["password"])) {
+    returnWithError("Missing login or password");
+}
 
-		$stmt->close();
-		$conn->close();
-	}
-	
-	function getRequestInfo()
-	{
-		return json_decode(file_get_contents('php://input'), true);
-	}
+$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
 
-	function sendResultInfoAsJson( $obj )
-	{
-		header('Content-type: application/json');
-		echo $obj;
-	}
-	
-	function returnWithError( $err )
-	{
-		$retValue = '{"id":0,"firstName":"","lastName":"","error":"' . $err . '"}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
-	function returnWithInfo( $firstName, $lastName, $id )
-	{
-		$retValue = '{"id":' . $id . ',"firstName":"' . $firstName . '","lastName":"' . $lastName . '","error":""}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
+if ($conn->connect_error) {
+    returnWithError($conn->connect_error, 500);//General error
+}
+
+$stmt = $conn->prepare("SELECT ID, FirstName, LastName FROM Users WHERE Login=? AND Password=?");
+$stmt->bind_param("ss", $inData["login"], $inData["password"]);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if (!($row = $result->fetch_assoc())) {
+    returnWithError("Invalid login or password", 401);
+}
+
+returnWithInfo($row["FirstName"], $row["LastName"], $row["ID"]);
+
+
+//Given functions
+function getRequestInfo() {
+    return json_decode(file_get_contents("php://input"), true);
+}
+
+function sendResultInfoAsJson($obj) {
+    header("Content-type: application/json");
+    echo $obj;
+}
+
+function returnWithError($err, $code = 400) {//Bad request as default
+    http_response_code($code);
+    //$retValue = '{"id":0,"FirstName":"","LastName":"","error":"' . $err . '"}'; names with quotes can break it
+	sendResultInfoAsJson(json_encode([
+        "id" => 0,
+        "FirstName" => "",
+        "LastName" => "",
+        "error" => $err
+    ]));
+    exit;//No need to continue
+}
+
+function returnWithInfo($FirstName, $LastName, $id) {
+	http_response_code(200);
+    sendResultInfoAsJson(json_encode([
+        "id" => (int)$id,
+        "FirstName" => $FirstName,
+        "LastName" => $LastName,
+        "error" => ""
+    ]));
+    exit;//No need to continue
+}
 
