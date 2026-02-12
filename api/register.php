@@ -1,28 +1,19 @@
 
 <?php
-require_once __DIR__ . "/given_functions.php";
-require_once __DIR__ . "/db.php";
+require_once __DIR__ . "/helpers.php";
 
-$inData = getRequestInfo();
-if(!$inData || empty($inData["FirstName"]) || empty($inData["LastName"]) || empty($inData["email"]) || empty($inData["Password"])) 
+$inData = getData();
+if(empty($inData["FirstName"]) || empty($inData["LastName"]) || empty($inData["email"]) || empty($inData["Password"])) 
 {
     returnWithError("Missing registration information", 400);
 }
 
+//Prepare data
 $conn = get_conn();
-if($conn->connect_error) 
-{
-    returnWithError($conn->connect_error, 500);//General error
-}
-
 $login = $inData["email"];//Email from registration becomes login username
 
 //Hash the password before storage with PHP's default encryption algo
 $hashedPassword = password_hash($inData["Password"], PASSWORD_BCRYPT);
-if($hashedPassword === false) 
-{
-    returnWithError("Failed to hash password", 500);
-}
 
 //Test for existing user
 $stmt = $conn->prepare("SELECT ID, FirstName, LastName FROM Users WHERE Login=?");
