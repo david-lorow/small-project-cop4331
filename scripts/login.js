@@ -27,7 +27,7 @@ async function sign_in(email, password) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 login: email,
-                password: password
+                Password: password
             })
 
         });
