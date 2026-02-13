@@ -34,8 +34,7 @@ $idArray = $contacts["IDs"];
 for($i = 0; $i < count($idArray); $i++)
 {
     $contact = getContactInfo($idArray[$i], $UserID);
-    $theBasics = ["ID" => $contact["ID"], "FirstName" => $contact["FirstName"], "LastName" => $contact["LastName"]];
-    $contactArray[] = $theBasics;
+    $contactArray[] = $contact;
 }
 
 //Finally, send search results
