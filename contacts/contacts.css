@@ -261,6 +261,18 @@ main{
     padding: 3px;
 }
 
+#searchResults tr.errorRow td {
+    background-color: white;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    padding: 20px;
+    border-bottom-color: #d2970d;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right: none;
+}
+
 .inlineButton{
     background-color: #e8aa14;
     border-width: 1px;

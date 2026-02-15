@@ -139,7 +139,7 @@ async function searchContact() {
         }
         else {
             contactStorage = [];
-            resultRow.innerHTML = `<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>`;
+            resultRow.innerHTML = `<tr class="errorRow"><td colspan="5">No contacts found.</td></tr>`;
         }
     }
     catch (error) {
@@ -246,7 +246,7 @@ async function deleteContact(contactId) {
         return;
     }
 
-    const deleteConfirm = confirm(`Are you sure you want to delete ${contact.FirstName} ${contact.Lastname}?`);
+    const deleteConfirm = confirm(`Are you sure you want to delete ${contact.FirstName} ${contact.LastName}?`);
     if (!deleteConfirm) {
         return;
     }
