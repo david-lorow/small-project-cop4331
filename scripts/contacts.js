@@ -22,15 +22,19 @@ function saveCookie()
 {
 	let minutes = 20;
 	let date = new Date();
-	date.setTime(date.getTime()+(minutes*60*1000));	
-	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString();
+	date.setTime(date.getTime()+(minutes*60*1000));
+    const expiry = ";expires=" + date.toGMTString() + ";path=/";
+
+	document.cookie = "firstName=" + firstName + expiry;
+    document.cookie = "lastName=" + lastName + expiry;
+    document.cookie = "userId=" + userId + expiry;
 }
 
 function readCookie()
 {
 	userId = -1;
 	let data = document.cookie;
-	let splits = data.split(",");
+	let splits = data.split(";");
 	for(var i = 0; i < splits.length; i++) 
 	{
 		let thisOne = splits[i].trim();
@@ -140,7 +144,7 @@ async function searchContact(){
         }
         else{
             contactStorage = [];
-            let errorMessage = document.getElementById("searchResults");
+            let errorMessage = document.getElementById("contactResultTable");
             errorMessage.innerHTML = "<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>";
         }
     }
@@ -150,7 +154,7 @@ async function searchContact(){
 }
 
 function displayResults(contacts){
-    const resultTable = document.getElementById("searchResults");
+    const resultTable = document.getElementById("contactResultTable");
     resultTable.innerHTML = ""; // default blank
 
     contacts.forEach(contact => { // contacts or contactArray??
