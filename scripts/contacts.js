@@ -1,10 +1,11 @@
+<<<<<<< HEAD
 const base_url = "http://cop4331-team21.online"
 
 const button = document.getElementById("logOut");
 
 let contactStorage = [];
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const welcome = document.getElementById("userWelcome");
 
     cookies = readCookie();
@@ -13,20 +14,19 @@ document.addEventListener("DOMContentLoaded", function() {
     lastName = cookies[1];
     userId = cookies[2];
 
-    if(typeof firstName !== 'undefined' && firstName){
+    if (typeof firstName !== 'undefined' && firstName) {
         welcome.textContent = `Hello, ${firstName}!`;
     }
-    else{
+    else {
         welcome.textContent = "Hello, User!";
     }
 });
 
 // Leinecker's code
-function saveCookie()
-{
-	let minutes = 20;
-	let date = new Date();
-	date.setTime(date.getTime()+(minutes*60*1000));
+function saveCookie() {
+    let minutes = 20;
+    let date = new Date();
+    date.setTime(date.getTime() + (minutes * 60 * 1000));
     const expiry = ";expires=" + date.toGMTString() + ";path=/";
 
     document.cookie = "firstName=" + firstName + expiry;
@@ -34,52 +34,46 @@ function saveCookie()
     document.cookie = "userId=" + userId + expiry;
 }
 
-function readCookie()
-{
-	userId = -1;
-	let data = document.cookie;
-	let splits = data.split(",");
-	for(var i = 0; i < splits.length; i++) 
-	{
-		let thisOne = splits[i].trim();
-		let tokens = thisOne.split("=");
-		if( tokens[0] == "firstName" )
-		{
-			firstName = tokens[1];
-		}
-		else if( tokens[0] == "lastName" )
-		{
-			lastName = tokens[1];
-		}
-		else if( tokens[0] == "userId" )
-		{
-			userId = parseInt( tokens[1].trim() );
-		}
-	}
-	
-	if( userId < 0 )
-	{
-		window.location.href = "../index.html";
-	}
-	return [firstName, lastName, userId]
+function readCookie() {
+    userId = -1;
+    let data = document.cookie;
+    let splits = data.split(",");
+    for (var i = 0; i < splits.length; i++) {
+        let thisOne = splits[i].trim();
+        let tokens = thisOne.split("=");
+        if (tokens[0] == "firstName") {
+            firstName = tokens[1];
+        }
+        else if (tokens[0] == "lastName") {
+            lastName = tokens[1];
+        }
+        else if (tokens[0] == "userId") {
+            userId = parseInt(tokens[1].trim());
+        }
+    }
+
+    if (userId < 0) {
+        window.location.href = "../index.html";
+    }
+    return [firstName, lastName, userId]
 }
 
-async function goAddContact(){
+async function goAddContact() {
 
     let resultTable = document.getElementById("contactResultTable");
     let addContact = document.getElementById("addContactUI");
 
-    if(!resultTable.classList.contains("hidden")){
+    if (!resultTable.classList.contains("hidden")) {
         resultTable.classList.add("hidden");
         addContact.classList.remove("hidden");
     }
-    else{
+    else {
         resultTable.classList.remove("hidden");
         addContact.classList.add("hidden");
     }
 }
 
-function showTable(){
+function showTable() {
     let resultTable = document.getElementById("contactResultTable");
     let addContact = document.getElementById("addContactUI");
 
@@ -87,7 +81,7 @@ function showTable(){
     addContact.classList.add("hidden");
 }
 
-async function addContact(){
+async function addContact() {
     let FirstName = document.getElementById("firstName").value;
     let LastName = document.getElementById("lastName").value;
     let Phone = document.getElementById("phone").value;
@@ -96,7 +90,7 @@ async function addContact(){
     const contactAdded = document.getElementById("contactAdded");
     contactAdded.innerHTML = "";
 
-    let tmp = {FirstName:FirstName, LastName:LastName, Phone:Phone, Email:Email};
+    let tmp = { FirstName: FirstName, LastName: LastName, Phone: Phone, Email: Email };
     let jsonPayload = JSON.stringify(tmp);
 
     const url = base_url + '/api/create_contact.php';
@@ -107,54 +101,54 @@ async function addContact(){
 
     xml.withCredientials = true;
 
-    try{
-        xml.onreadystatechange = function(){
-            if(this.readyState == 4 && this.status == 200){
+    try {
+        xml.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
                 contactAdded.innerHTML = "Contact Added Successfully!";
                 contactAdded.classList.remove("hidden");
             }
         };
         xml.send(jsonPayload);
     }
-    catch(err){
+    catch (err) {
         contactAdded.innerHTML = "Error adding contact: " + err.message;
         contactAdded.classList.remove("hidden");
     }
 
 }
 
-async function searchContact(){
+async function searchContact() {
     const fullSearch = document.getElementById("searchContacts").value.trim();
 
     const FirstName = fullSearch.split(" ")[0] || "";
     const LastName = fullSearch.split(" ")[1] || "";
 
-    try{
+    try {
         const res = await fetch(base_url + "/api/get_contacts_with_name.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({FirstName, LastName})
+            body: JSON.stringify({ FirstName, LastName })
         });
 
         const data = await res.json();
 
-        if(res.ok && data.results){
+        if (res.ok && data.results) {
             contactStorage = data.results;
             displayResults(contactStorage);
         }
-        else{
+        else {
             contactStorage = [];
             let errorMessage = document.getElementById("contactResultTable");
             errorMessage.innerHTML = "<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>";
         }
     }
-    catch(error){
+    catch (error) {
         console.error("Error searching contacts: " + error);
     }
 }
 
-function displayResults(contacts){
+function displayResults(contacts) {
     const resultTable = document.getElementById("contactResultTable");
     resultTable.innerHTML = ""; // default blank
 
@@ -166,7 +160,7 @@ function displayResults(contacts){
     });
 }
 
-function getRowTemp(contact){
+function getRowTemp(contact) {
     return `
             <td>${contact.FirstName}</td>
             <td>${contact.LastName}</td>
@@ -179,9 +173,9 @@ function getRowTemp(contact){
         `;
 }
 
-function editContact(contactId){
+function editContact(contactId) {
     const contact = contactStorage.find(c => c.ID === contactId);
-    if(!contact){
+    if (!contact) {
         return;
     }
 
@@ -199,7 +193,7 @@ function editContact(contactId){
     `;
 }
 
-async function saveContact(contactId){
+async function saveContact(contactId) {
     const updatedContact = {
         ID: contactId,
         FirstName: document.getElementById(`editFirstName-${contactId}`).value.trim(),
@@ -207,8 +201,8 @@ async function saveContact(contactId){
         Phone: document.getElementById(`editPhone-${contactId}`).value.trim(),
         Email: document.getElementById(`editEmail-${contactId}`).value.trim()
     };
-    
-    try{
+
+    try {
         const res = await fetch(base_url + "/api/update_contact.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -218,28 +212,28 @@ async function saveContact(contactId){
 
         const data = await res.json();
 
-        if(res.ok && data.ID){
+        if (res.ok && data.ID) {
             const index = contactStorage.findIndex(c => c.ID === contactId);
-            if(index !== -1){
+            if (index !== -1) {
                 contactStorage[index] = data; // update local storage with new contact info
             }
 
             const row = document.getElementById(`row-${contactId}`);
             row.innerHTML = getRowTemp(data);
         }
-        else{
+        else {
             alert("Error: " + (data.error || "Failed to update contact information."));
         }
 
     }
-    catch(error){
+    catch (error) {
         console.error("Error updating contact: " + error);
     }
 }
 
-function cancelEdit(contactId){
+function cancelEdit(contactId) {
     const contact = contactStorage.find(c => c.ID === contactId);
-    if(!contact){
+    if (!contact) {
         return;
     }
 
@@ -247,46 +241,46 @@ function cancelEdit(contactId){
     row.innerHTML = getRowTemp(contact); // back to original contact info
 }
 
-async function deleteContact(contactId){
+async function deleteContact(contactId) {
     const contact = contactStorage.find(c => c.ID === contactId);
-    if(!contact){
+    if (!contact) {
         return;
     }
 
     const deleteConfirm = confirm(`Are you sure you want to delete ${contact.FirstName} ${contact.Lastname}?`);
-    if(!deleteConfirm){
+    if (!deleteConfirm) {
         return;
     }
 
-    try{
+    try {
         const res = await fetch(base_url + "/api/delete_contact.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ID:contactId})
+            body: JSON.stringify({ ID: contactId })
         });
 
         const data = await res.json();
 
-        if(res.ok && !data.error){
+        if (res.ok && !data.error) {
             searchContact(); // refresh contact table
         }
 
 
     }
-    catch(error){
+    catch (error) {
         console.error("Error deleting contact: " + error);
     }
 }
 
-button.addEventListener("click", async function(e){
+button.addEventListener("click", async function (e) {
     e.preventDefault();
     await logOut();
 });
 
-async function logOut(){
-	
-    try{
+async function logOut() {
+
+    try {
 
         const res = await fetch(base_url + "/api/logout.php", {
 
@@ -303,12 +297,12 @@ async function logOut(){
             localStorage.clear();
             window.location.href = "../";
         }
-        else{
+        else {
             console.error("Logout failed: " + data.error);
         }
 
     }
-    catch(error){
+    catch (error) {
         console.error("Error during logout: ", error);
     }
 }
