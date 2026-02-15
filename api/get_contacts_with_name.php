@@ -28,27 +28,10 @@ if(!$contacts["matches?"])
     returnWithError("Nobody found", 404);
 }
 
-$contactArray = [];
 
-$idArray = $contacts["IDs"];
-for($i = 0; $i < count($idArray); $i++)
-{
-    $contact = getContactInfo($idArray[$i], $UserID);
-    $contactArray[] = $contact;
-}
 
 //Finally, send search results
-sendSearchResults($contactArray);
-
-function sendSearchResults($contactArray) 
-{
-    http_response_code(200);
-    sendResultInfoAsJson(json_encode([
-        "results" => $contactArray,
-        "error" => ""
-    ]));
-    exit;//No need to continue
-}
+sendContactsByIDs($contacts, $UserID);
 
 function checkForContact($UserId, $FirstName, $LastName)
 {
@@ -56,8 +39,8 @@ function checkForContact($UserId, $FirstName, $LastName)
     $stmt = $conn->prepare("SELECT ID FROM Contacts WHERE UserID=? AND (FirstName LIKE ? OR LastName LIKE ?)");
     if(!$stmt) returnWithError($conn->error, 500);
     //Insert wild cards
-    $first = $FirstName . "%";
-    $last = $LastName . "%";
+    $first = "%" . $FirstName . "%";
+    $last = "%" . $LastName . "%";
     $stmt->bind_param("iss", $UserId, $first, $last);
     $stmt->execute();
     $result = $stmt->get_result();
