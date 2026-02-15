@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const base_url = "http://cop4331-team21.online"
 
 const button = document.getElementById("logOut");
