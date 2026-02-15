@@ -138,7 +138,7 @@ async function searchContact() {
         }
         else {
             contactStorage = [];
-            let errorMessage = document.getElementById("contactResultTable");
+            let errorMessage = document.getElementById("searchResults");
             errorMessage.innerHTML = "<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>";
         }
     }
@@ -148,10 +148,10 @@ async function searchContact() {
 }
 
 function displayResults(contacts) {
-    const resultTable = document.getElementById("contactResultTable");
+    const resultTable = document.getElementById("searchResults");
     resultTable.innerHTML = ""; // default blank
 
-    contacts.forEach(contact => { // contacts or contactArray??
+    contacts.forEach(contact => {
         const row = document.createElement("tr");
         row.setAttribute("id", `row-${contact.ID}`);
         row.innerHTML = getRowTemp(contact);
