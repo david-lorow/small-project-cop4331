@@ -1,0 +1,83 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./contacts.css" rel="stylesheet">
+        <script src="../scripts/contacts.js"></script>
+        <title>THE YELLOW PAGES Contact Page</title>
+    </head>
+
+    <body>
+        <nav id="navMenu">
+            <img id="logo"src="../images/Logo.png" alt="Yellow Pages Logo">
+            <button type="button" id="logOut" onclick="logOut();">Log Out</button>
+            <a href="contacts.html">Contacts</a>
+            <a href="aboutus.html">About Us</a> <!--create aboutus.html later-->
+
+        </nav>
+
+        <main>
+            <div id="logInConfirm">
+                <h1 id="userWelcome">Hello, User!</h1>
+            </div>
+
+            <div id="contactTableUI">
+                <div id="topBar">
+                    <input type="text" id="searchContacts" placeholder="Search Contacts">
+                    <button type="button" id="searchContactButton" onclick="searchContact();">
+                        <img src="../images/searchLogo.png" alt="Search Contact" style="width: 30px; height: 30px;">
+                    </button>
+                    <br>
+                    <button type="button" id="goAddContact" onclick="goAddContact();">
+                        <img src="../images/addLogo.png" alt="Add Contact" style="width: 30px; height: 30px;">
+                    </button> <!--reveals addContact div-->
+                    <br>
+                </div>
+
+                <table id="contactResultTable">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="searchResults">
+                        <!--search results go here-->
+                    </tbody>
+                </table>
+            </div>
+
+            <br>
+
+            <div id="addContactUI" class="hidden">
+                <h2>Add New Contact</h2>
+                <form id="addContactForm" action="create_contact.php" method="post">
+                    <label for="inputFirstName">First Name:</label><br>
+                    <input type="text" name="firstName" id="firstName" required><br>
+
+                    <label for="inputLastName">Last Name:</label><br>
+                    <input type="text" name="lastName" id="lastName" required><br>
+
+                    <label for="inputPhone">Phone:</label><br>
+                    <input type="tel" name="phone" id="phone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required><br>
+
+                    <label for="inputEmail">Email:</label><br>
+                    <input type="email" name="email" id="email" required><br>
+
+                    <div id="buttons">
+                        <button type="button" onclick="addContact()">Add Contact</button>
+                        <button type="button" onclick="showTable()">Cancel</button>
+                    </div>
+
+                    <p id="contactAdded" class="hidden"></p>
+
+                </form>
+            </div>
+
+        </main>
+    </body>
+
+</html>
