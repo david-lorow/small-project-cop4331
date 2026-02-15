@@ -118,6 +118,7 @@ async function addContact() {
 
 async function searchContact() {
     const fullSearch = document.getElementById("searchContacts").value.trim();
+    const resultRow = document.getElementById("searchResults");
 
     const FirstName = fullSearch.split(" ")[0] || "";
     const LastName = fullSearch.split(" ")[1] || "";
@@ -138,8 +139,7 @@ async function searchContact() {
         }
         else {
             contactStorage = [];
-            let errorMessage = document.getElementById("searchResults");
-            errorMessage.innerHTML = "<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>";
+            resultRow.innerHTML = `<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>`;
         }
     }
     catch (error) {
@@ -165,7 +165,7 @@ function getRowTemp(contact) {
             <td>${contact.LastName}</td>
             <td>${contact.Phone}</td>
             <td>${contact.Email}</td>
-            <td>
+            <td class=>
             <button type="button" class=inlineButton onclick="editContact(${contact.ID})" title="Edit"><img src="../images/editLogo.png" alt="Edit" style="width: 24px; height: 24px;"></button>
             <button type="button" class=inlineButton onclick="deleteContact(${contact.ID})" title="Delete"><img src="../images/deleteLogo.png" alt="Delete" style="width: 24px; height: 24px;"></button>
             </td>

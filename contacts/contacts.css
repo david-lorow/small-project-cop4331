@@ -58,12 +58,12 @@ main{
     height: 22.5%;
 }
 
-#logout{
+#logOut{
     background: transparent;
     border: none;
 }
 
-#logout:hover{
+#logOut:hover{
     color: #e8aa14;
     font-weight: bold;
 }
@@ -202,19 +202,18 @@ main{
 #contactResultTable{
     width: 85%;
     max-width: 1200px;
-    /* border-color: #d2970d;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 15px; */
     border: none;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
     margin-top: 7.5%;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1em;
-    overflow: hidden;
-    table-layout: fixed;
+}
+
+#contactResultTable thead {
+    display: table-header-group;
+    width: 100%;
 }
 
 #contactResultTable th{
@@ -253,6 +252,13 @@ main{
     text-align: center;
     vertical-align: middle;
     margin-inline: 5px;
+}
+
+#searchResults input{
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    padding: 3px;
 }
 
 .inlineButton{
