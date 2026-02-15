@@ -2,7 +2,7 @@ const base_url = "http://cop4331-team21.online"
 
 const button = document.getElementById("sign-in");
 
-button.addEventListener("click", (e) => {
+button.addEventListener("click", async function(e) {
     e.preventDefault();
 
     const form = document.getElementById("login-form");
@@ -14,8 +14,22 @@ button.addEventListener("click", (e) => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    sign_in(email, password);
+    const user = await sign_in(email, password);
+     
+    saveCookie(user.FirstName, user.LastName, user.id);
+    
+    window.location.replace("../contacts/");
+
 });
+
+function saveCookie(firstName, lastName, userId)
+{
+	let minutes = 20;
+	let date = new Date();
+	date.setTime(date.getTime()+(minutes*60*1000));	
+	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString() + ";path=/";
+}
+
 
 async function sign_in(email, password) {
 
@@ -38,7 +52,8 @@ async function sign_in(email, password) {
             throw new Error("Login Failed: " + data.error);
         }
 
-        console.log(data);
+	return data;
+
     } catch (err) {
         console.error(err);
     }
