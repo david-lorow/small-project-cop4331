@@ -1,13 +1,6 @@
 <?php
-ini_set('session.use_strict_mode', 1);//Keeping things secure
-session_set_cookie_params([
-  'lifetime' => 0, //Whenever the browser closes
-  'path' => '/',
-  'domain' => '',         
-  'secure' => false, //Just in case      
-  'httponly' => true,     
-  'samesite' => 'Lax',   
-]);
+require_once __DIR__ . "/session_maker.php";
+sessionMake();
 session_start();
 
 require_once __DIR__ . "/helpers.php";
@@ -45,8 +38,8 @@ if(!password_verify($inData["Password"], $row["Password"]))
 session_regenerate_id(true); //Extra refresh
 $_SESSION['UserID'] = (int)$row["ID"];
 $_SESSION['first_name'] = $row["FirstName"];
-$_SESSION['last_name']  = $row["LastName"];
-$_SESSION['login']      = $inData["login"];
+$_SESSION['last_name'] = $row["LastName"];
+$_SESSION['login'] = $inData["login"];
 $_SESSION['logged_in_at'] = time();
 session_write_close(); //Writing's over
 
