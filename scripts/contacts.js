@@ -89,35 +89,32 @@ function readCookie() {
 }
 
 function phoneDash(input){
-    input.addEventListener("input", function (event) {
+    input.addEventListener("blur", function (event) {
         
-        let cursor = input.selectionStart;
+        let digits = event.target.value.replace(/\D/g, "");
 
-        const previous = input.dataset.previous || "";
-        const isBackspace = previous.length > input.value.length;
+        if(digits.length === 10){
+            let formatted = "";
+            if (digits.length > 0) {
+                formatted += digits.substring(0, 3);
+            }
+            if (digits.length >= 4) {
+                formatted += "-" + digits.substring(3, 6);
+            }
+            if (digits.length >= 7) {
+                formatted += "-" + digits.substring(6, 10);
+            }
 
-        let digits = event.target.value.replace(/\D/g, "").substring(0, 10);
+            input.value = formatted;
 
-        let formatted = "";
-        if (digits.length > 0) {
-            formatted += digits.substring(0, 3);
         }
-        if (digits.length >= 4) {
-            formatted += "-" + digits.substring(3, 6);
-        }
-        if (digits.length >= 7) {
-            formatted += "-" + digits.substring(6, 10);
+        else if(digits.length > 0){
+            console.log("Invalid phone number length: " + digits.length);
         }
 
-        if(isBackspace && previous[cursor] === "-" && cursor > 0){
-            cursor--;
-        }
-
-        input.value = formatted;
-        input.setSelectionRange(cursor, cursor);
-
-        input.dataset.previous = formatted;
-
+    });
+    input.addEventListener("focus", function (event) {
+        input.value = event.target.value.replace(/\D/g, "");
     });
 }
 
