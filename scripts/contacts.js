@@ -136,6 +136,17 @@ async function goAddContact() {
 function showTable() {
     let resultTable = document.getElementById("contactResultTable");
     let addContact = document.getElementById("addContactUI");
+    let addForm = document.getElementById("addContactForm");
+    let addMessage = document.getElementById("contactAdded");
+
+    if(addForm){
+        addForm.reset();
+    }
+
+    if(addMessage){
+        addMessage.innerHTML = "";
+        addMessage.classList.add("hidden");
+    }
 
     resultTable.classList.remove("hidden");
     addContact.classList.add("hidden");
