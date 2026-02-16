@@ -1,0 +1,135 @@
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fcd757;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    margin-bottom: 60%;
+}
+
+main{
+    margin-left: 20%;
+    width: 80%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-inline: 20px;
+}
+
+h1{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+main > p:first-of-type{
+    font-size: 1.5em;
+    margin: 10px;
+    margin-bottom: 20px;
+}
+
+#navMenu{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20%;
+    max-width: 250px;
+    min-height: 100vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.9em;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#navMenu * {
+    font-family: inherit;
+    font-size: inherit;
+    margin-block: 25px;
+    text-decoration: none;
+    color: black;
+}
+
+#navMenu :not(#logo){
+    margin-block: 40px;
+}
+
+#logo{
+    width: 60%;
+    height: 22.5%;
+}
+
+#logout{
+    background: transparent;
+    border: none;
+}
+
+#logout:hover{
+    color: #e8aa14;
+    font-weight: bold;
+}
+
+#navMenu a:hover{
+    color: #e8aa14
+}
+
+#pictureGrid{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    row-gap: 50px;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 15px;
+    justify-items: center;
+}
+
+.pictureItem:nth-child(-n+3){
+    grid-column: span 2;
+}
+
+.pictureItem:nth-child(n+4){
+    grid-column: span 3;
+}
+
+.pictureItem img{
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.pictureItem{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.pictureItem > * {
+    font-size: 1em;
+    margin: 0;
+    text-align: center;
+}
+
+.pictureItem p{
+    margin: 0px;
+}
+
+.pictureItem .name{
+    display: inline-block;
+    text-decoration: none;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.2em;
+    color: black;
+}
+
+.pictureItem a:hover{
+    color: #e8aa14;
+    font-weight: bold;
+}
