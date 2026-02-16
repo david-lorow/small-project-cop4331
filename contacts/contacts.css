@@ -173,7 +173,7 @@ main{
     margin-top: 5%;
 }
 
-#addContactUI button{
+#addContactUI button, #addContact input[type="submit"]{
     background-color: #e8aa14;
     border-width: 1px;
     border-radius: 15px;
@@ -185,10 +185,16 @@ main{
     height: 30px;
     margin-block: 10px;
     padding: 5px;
+    font-family: inherit;
+
 }
 
-#addContactUI button:hover{
+#addContactUI button:hover, #addContactUI input[type="submit"]:hover{
     background-color: #d2970d;
+}
+
+#addContactForm input:invalid{
+    border-color: red;
 }
 
 #contactAdded{

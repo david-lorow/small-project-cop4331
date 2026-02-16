@@ -64,13 +64,13 @@
                     <input type="text" name="lastName" id="lastName" required><br>
 
                     <label for="inputPhone">Phone:</label><br>
-                    <input type="tel" name="phone" id="phone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required><br>
+                    <input type="tel" name="phone" id="phone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" max-length="12" title="Please enter a 10-digit phone number." required><br>
 
                     <label for="inputEmail">Email:</label><br>
-                    <input type="email" name="email" id="email" required><br>
+                    <input type="email" name="email" id="email" title="Please enter valid email address (e.g. name@example.com)" required><br>
 
                     <div id="buttons">
-                        <button type="button" onclick="addContact()">Add Contact</button>
+                        <button type="submit">Add Contact</button>
                         <button type="button" onclick="showTable()">Cancel</button>
                     </div>
 

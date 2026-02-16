@@ -2,6 +2,8 @@ const base_url = "http://cop4331-team21.online"
 
 const button = document.getElementById("logOut");
 
+const phoneInput = document.getElementById("phone");
+
 let contactStorage = [];
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -80,6 +82,16 @@ function showTable() {
     addContact.classList.add("hidden");
 }
 
+document.getElementById("addContactForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if(!this.checkValidity()){
+        return;
+    }
+
+    addContact();
+});
+
 async function addContact() {
     let FirstName = document.getElementById("firstName").value;
     let LastName = document.getElementById("lastName").value;
@@ -98,13 +110,20 @@ async function addContact() {
     xml.open("POST", url, true);
     xml.setRequestHeader("Content-type", "application/json; charset=UTF-8");
 
-    xml.withCredientials = true;
+    xml.withCredentials = true;
 
     try {
         xml.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 contactAdded.innerHTML = "Contact Added Successfully!";
                 contactAdded.classList.remove("hidden");
+
+                document.getElementById("addContactForm").reset();
+
+                setTimeout(() => {
+                    showTable();
+                    contactAdded.classList.add("hidden");
+                }, 2000);
             }
         };
         xml.send(jsonPayload);
@@ -115,6 +134,39 @@ async function addContact() {
     }
 
 }
+
+phoneInput.addEventListener("input", function (event) {
+    const input = event.target;
+    let cursor = input.selectionStart;
+
+    const previous = input.dataset.previous || "";
+    const isBackspace = previous.length > input.value.length;
+
+    let digits = event.target.value.replace(/\D/g, "").substring(0, 10);
+
+    let formatted = "";
+    if (digits.length > 0) {
+        formatted += digits.substring(0, 3);
+    }
+    if (digits.length >= 4) {
+        formatted += "-" + digits.substring(3, 6);
+    }
+    if (digits.length >= 7) {
+        formatted += "-" + digits.substring(6, 10);
+    }
+
+    if(isBackspace){
+        if(previous[cursor] === "-" && cursor > 0){
+            cursor--;
+        }
+    }
+
+    input.value = formatted;
+    input.setSelectionRange(cursor, cursor);
+
+    input.dataset.previous = formatted;
+
+});
 
 async function searchContact() {
     const fullSearch = document.getElementById("searchContacts").value.trim();
