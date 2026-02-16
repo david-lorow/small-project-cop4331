@@ -165,7 +165,7 @@ function getRowTemp(contact) {
             <td>${contact.LastName}</td>
             <td>${contact.Phone}</td>
             <td>${contact.Email}</td>
-            <td class=>
+            <td>
             <button type="button" class=inlineButton onclick="editContact(${contact.ID})" title="Edit"><img src="../images/editLogo.png" alt="Edit" style="width: 24px; height: 24px;"></button>
             <button type="button" class=inlineButton onclick="deleteContact(${contact.ID})" title="Delete"><img src="../images/deleteLogo.png" alt="Delete" style="width: 24px; height: 24px;"></button>
             </td>
