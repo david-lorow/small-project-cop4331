@@ -56,7 +56,7 @@
 
             <div id="addContactUI" class="hidden">
                 <h2>Add New Contact</h2>
-                <form id="addContactForm" action="create_contact.php" method="post">
+                <form id="addContactForm">
                     <label for="inputFirstName">First Name:</label><br>
                     <input type="text" name="firstName" id="firstName" required><br>
 
@@ -64,7 +64,7 @@
                     <input type="text" name="lastName" id="lastName" required><br>
 
                     <label for="inputPhone">Phone:</label><br>
-                    <input type="tel" name="phone" id="phone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" max-length="12" title="Please enter a 10-digit phone number." required><br>
+                    <input type="tel" name="phone" id="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" max-length="12" title="Please enter a 10-digit phone number." required><br>
 
                     <label for="inputEmail">Email:</label><br>
                     <input type="email" name="email" id="email" title="Please enter valid email address (e.g. name@example.com)" required><br>

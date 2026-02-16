@@ -193,8 +193,12 @@ main{
     background-color: #d2970d;
 }
 
-#addContactForm input:invalid{
+#addContactForm input:user-invalid{
     border-color: red;
+}
+
+#addContactForm input:user-valid{
+    border-color: green;
 }
 
 #contactAdded{

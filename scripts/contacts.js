@@ -1,14 +1,17 @@
 const base_url = "http://cop4331-team21.online"
 
-const button = document.getElementById("logOut");
-
-const phoneInput = document.getElementById("phone");
-
 let contactStorage = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     const welcome = document.getElementById("userWelcome");
 
+    const phoneInput = document.getElementById("phone");
+
+    const button = document.getElementById("logOut");
+
+    const addContactButton = document.getElementById("addContactForm");
+
+    // welcome logic
     cookies = readCookie();
 
     firstName = cookies[0];
@@ -20,6 +23,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     else {
         welcome.textContent = "Hello, User!";
+    }
+
+    // phone logic
+    if(phoneInput){
+        phoneDash(phoneInput);
+    }
+
+    // logout logic
+    if(button){
+        button.addEventListener("click", async function (event) {
+            event.preventDefault();
+            await logOut();
+        });
+    }
+
+    // add contact logic
+    if(addContactButton){
+        addContactButton.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if(!this.checkValidity()){
+                return;
+            }
+
+            addContact();
+        });
     }
 });
 
@@ -59,6 +88,39 @@ function readCookie() {
     return [firstName, lastName, userId]
 }
 
+function phoneDash(input){
+    input.addEventListener("input", function (event) {
+        
+        let cursor = input.selectionStart;
+
+        const previous = input.dataset.previous || "";
+        const isBackspace = previous.length > input.value.length;
+
+        let digits = event.target.value.replace(/\D/g, "").substring(0, 10);
+
+        let formatted = "";
+        if (digits.length > 0) {
+            formatted += digits.substring(0, 3);
+        }
+        if (digits.length >= 4) {
+            formatted += "-" + digits.substring(3, 6);
+        }
+        if (digits.length >= 7) {
+            formatted += "-" + digits.substring(6, 10);
+        }
+
+        if(isBackspace && previous[cursor] === "-" && cursor > 0){
+            cursor--;
+        }
+
+        input.value = formatted;
+        input.setSelectionRange(cursor, cursor);
+
+        input.dataset.previous = formatted;
+
+    });
+}
+
 async function goAddContact() {
 
     let resultTable = document.getElementById("contactResultTable");
@@ -82,16 +144,6 @@ function showTable() {
     addContact.classList.add("hidden");
 }
 
-document.getElementById("addContactForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    if(!this.checkValidity()){
-        return;
-    }
-
-    addContact();
-});
-
 async function addContact() {
     let FirstName = document.getElementById("firstName").value;
     let LastName = document.getElementById("lastName").value;
@@ -112,61 +164,55 @@ async function addContact() {
 
     xml.withCredentials = true;
 
-    try {
+    try{
         xml.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                contactAdded.innerHTML = "Contact Added Successfully!";
-                contactAdded.classList.remove("hidden");
+            if (this.readyState == 4){
+                if(this.status == 200){
+                    try{
+                        let response = JSON.parse(this.responseText);
 
-                document.getElementById("addContactForm").reset();
+                        if (response.error && response.error.length > 0) {
+                            contactAdded.innerHTML = "Contact Not Added: " + response.error;
+                            contactAdded.style.color = "red";
+                            contactAdded.classList.remove("hidden");
+                        }
+                        else{
+                            contactAdded.innerHTML = "Contact Added Successfully!";
+                            contactAdded.style.color = "green";
+                            contactAdded.classList.remove("hidden");
 
-                setTimeout(() => {
-                    showTable();
-                    contactAdded.classList.add("hidden");
-                }, 2000);
+                            document.getElementById("addContactForm").reset();
+                            setTimeout(() => {
+                                showTable();
+                                contactAdded.classList.add("hidden");
+                            }, 2000);
+                        }
+                    }
+                    catch(parseError){
+                        contactAdded.innerHTML = "Error adding contact: " + parseError.message;
+                        contactAdded.style.color = "red";
+                        contactAdded.classList.remove("hidden");
+                    }
+
+                }
+                else{
+                    contactAdded.innerHTML = "Error adding contact: " + this.statusText;
+                    contactAdded.style.color = "red";
+                    contactAdded.classList.remove("hidden");
+                }
             }
         };
+
         xml.send(jsonPayload);
+
     }
-    catch (err) {
-        contactAdded.innerHTML = "Error adding contact: " + err.message;
+    catch(error){
+        contactAdded.innerHTML = "Error adding contact: " + error.message;
+        contactAdded.style.color = "red";
         contactAdded.classList.remove("hidden");
     }
 
 }
-
-phoneInput.addEventListener("input", function (event) {
-    const input = event.target;
-    let cursor = input.selectionStart;
-
-    const previous = input.dataset.previous || "";
-    const isBackspace = previous.length > input.value.length;
-
-    let digits = event.target.value.replace(/\D/g, "").substring(0, 10);
-
-    let formatted = "";
-    if (digits.length > 0) {
-        formatted += digits.substring(0, 3);
-    }
-    if (digits.length >= 4) {
-        formatted += "-" + digits.substring(3, 6);
-    }
-    if (digits.length >= 7) {
-        formatted += "-" + digits.substring(6, 10);
-    }
-
-    if(isBackspace){
-        if(previous[cursor] === "-" && cursor > 0){
-            cursor--;
-        }
-    }
-
-    input.value = formatted;
-    input.setSelectionRange(cursor, cursor);
-
-    input.dataset.previous = formatted;
-
-});
 
 async function searchContact() {
     const fullSearch = document.getElementById("searchContacts").value.trim();
@@ -242,6 +288,12 @@ function editContact(contactId) {
             <button type="button" class=inlineButton onclick="cancelEdit(${contactId})" title="Cancel"><img src="../images/cancelLogo.png" alt="Cancel" style="width: 24px; height: 24px;"></button>
         </td>
     `;
+
+    const editPhone = document.getElementById(`editPhone-${contactId}`);
+    
+    if(editPhone){
+        phoneDash(editPhone);
+    }
 }
 
 async function saveContact(contactId) {
@@ -323,11 +375,6 @@ async function deleteContact(contactId) {
         console.error("Error deleting contact: " + error);
     }
 }
-
-button.addEventListener("click", async function (e) {
-    e.preventDefault();
-    await logOut();
-});
 
 async function logOut() {
 
