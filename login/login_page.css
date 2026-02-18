@@ -1,12 +1,12 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #e8f000;
+    background-color: #fcd757;
 }
 
 .header {
     background: white;
-    font-family: "Arial";
+    font-family: Arial;
     padding: 20px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -95,7 +95,7 @@ button {
     border-radius: 30px;
     padding: 10px;
     border: 1px solid #ccc;
-    background-color: #E8F000;
+    background-color: #fcd757;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
     margin-top: 40px;
     margin-bottom: 20px;
@@ -103,7 +103,7 @@ button {
 }
 
 button:hover {
-    background-color: #d6de03;
+    background-color: #f9d038;
 }
 
 a {

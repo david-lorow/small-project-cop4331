@@ -58,12 +58,12 @@ main{
     height: 22.5%;
 }
 
-#logout{
+#logOut{
     background: transparent;
     border: none;
 }
 
-#logout:hover{
+#logOut:hover{
     color: #e8aa14;
     font-weight: bold;
 }
@@ -173,7 +173,7 @@ main{
     margin-top: 5%;
 }
 
-#addContactUI button{
+#addContactUI button, #addContact input[type="submit"]{
     background-color: #e8aa14;
     border-width: 1px;
     border-radius: 15px;
@@ -185,10 +185,20 @@ main{
     height: 30px;
     margin-block: 10px;
     padding: 5px;
+    font-family: inherit;
+
 }
 
-#addContactUI button:hover{
+#addContactUI button:hover, #addContactUI input[type="submit"]:hover{
     background-color: #d2970d;
+}
+
+#addContactForm input:user-invalid{
+    border-color: red;
+}
+
+#addContactForm input:user-valid{
+    border-color: green;
 }
 
 #contactAdded{
@@ -200,19 +210,20 @@ main{
 }
 
 #contactResultTable{
-    width: 85%;
-    max-width: 1200px;
-    border-color: #d2970d;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 15px;
+    width: 95%;
+    max-width: 1300px;
+    border: none;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
     margin-top: 7.5%;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1em;
-    overflow: hidden;
+}
+
+#contactResultTable thead {
+    display: table-header-group;
+    width: 100%;
 }
 
 #contactResultTable th{
@@ -225,7 +236,13 @@ main{
     text-transform: uppercase;
 }
 
-#contactResultTable td{
+#contactResultTable th:not(:last-child){
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: #d2970d; 
+}
+
+#searchResults td{
     background-color: white;
     color: black;
     border-bottom-color: #d2970d;
@@ -234,22 +251,42 @@ main{
     padding: 12px;
 }
 
-#contactResultTable th:not(:last-child){
-    border-right-width: 1px;
-    border-right-style: solid;
-    border-right-color: #d2970d; 
-}
-
-#searchResults td:not(last-child){
+#searchResults td:not(:last-child){
     border-right-width: 1px;
     border-right-style: solid;
     border-right-color: #d2970d;
 }
 
 #searchResults td:last-child {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 130px;
+    margin-inline: 5px;
+}
+
+#searchResults input{
+    width: 100%;
+    min-width: 80px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: black;
+    border-style: solid;
+    padding: 3px;
+}
+
+#searchResults tr.errorRow td {
+    background-color: white;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    padding: 20px;
+    border-bottom-color: #d2970d;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right: none;
 }
 
 .inlineButton{

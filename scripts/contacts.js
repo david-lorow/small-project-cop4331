@@ -1,13 +1,19 @@
-<<<<<<< HEAD
 const base_url = "http://cop4331-team21.online"
-
-const button = document.getElementById("logOut");
 
 let contactStorage = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     const welcome = document.getElementById("userWelcome");
 
+    const searchBar = document.getElementById("searchContacts");
+
+    const phoneInput = document.getElementById("phone");
+
+    const button = document.getElementById("logOut");
+
+    const addContactButton = document.getElementById("addContactForm");
+
+    // welcome logic
     cookies = readCookie();
 
     firstName = cookies[0];
@@ -20,6 +26,47 @@ document.addEventListener("DOMContentLoaded", function () {
     else {
         welcome.textContent = "Hello, User!";
     }
+
+    // phone logic
+    if (phoneInput) {
+        phoneDash(phoneInput);
+    }
+
+    // logout logic
+    if (button) {
+        button.addEventListener("click", async function (event) {
+            event.preventDefault();
+            await logOut();
+        });
+    }
+
+    // add contact logic
+    if (addContactButton) {
+        addContactButton.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (!this.checkValidity()) {
+                return;
+            }
+
+            addContact();
+        });
+    }
+
+    if (searchBar) {
+        searchBar.addEventListener("input", async function (e) {
+            const input = e.target.value.trim();
+
+            if (input) {
+                searchContact();
+            }
+            else {
+                listContacts();
+            }
+        });
+    }
+
+    listContacts();
 });
 
 // Leinecker's code
@@ -58,6 +105,36 @@ function readCookie() {
     return [firstName, lastName, userId]
 }
 
+function phoneDash(input) {
+    input.addEventListener("blur", function (event) {
+
+        let digits = event.target.value.replace(/\D/g, "");
+
+        if (digits.length === 10) {
+            let formatted = "";
+            if (digits.length > 0) {
+                formatted += digits.substring(0, 3);
+            }
+            if (digits.length >= 4) {
+                formatted += "-" + digits.substring(3, 6);
+            }
+            if (digits.length >= 7) {
+                formatted += "-" + digits.substring(6, 10);
+            }
+
+            input.value = formatted;
+
+        }
+        else if (digits.length > 0) {
+            console.log("Invalid phone number length: " + digits.length);
+        }
+
+    });
+    input.addEventListener("focus", function (event) {
+        input.value = event.target.value.replace(/\D/g, "");
+    });
+}
+
 async function goAddContact() {
 
     let resultTable = document.getElementById("contactResultTable");
@@ -76,6 +153,17 @@ async function goAddContact() {
 function showTable() {
     let resultTable = document.getElementById("contactResultTable");
     let addContact = document.getElementById("addContactUI");
+    let addForm = document.getElementById("addContactForm");
+    let addMessage = document.getElementById("contactAdded");
+
+    if (addForm) {
+        addForm.reset();
+    }
+
+    if (addMessage) {
+        addMessage.innerHTML = "";
+        addMessage.classList.add("hidden");
+    }
 
     resultTable.classList.remove("hidden");
     addContact.classList.add("hidden");
@@ -99,26 +187,81 @@ async function addContact() {
     xml.open("POST", url, true);
     xml.setRequestHeader("Content-type", "application/json; charset=UTF-8");
 
-    xml.withCredientials = true;
+    xml.withCredentials = true;
 
     try {
         xml.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                contactAdded.innerHTML = "Contact Added Successfully!";
-                contactAdded.classList.remove("hidden");
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    try {
+                        let response = JSON.parse(this.responseText);
+
+                        if (response.error && response.error.length > 0) {
+                            contactAdded.innerHTML = "Contact Not Added: " + response.error;
+                            contactAdded.style.color = "red";
+                            contactAdded.classList.remove("hidden");
+                        }
+                        else {
+                            contactAdded.innerHTML = "Contact Added Successfully!";
+                            contactAdded.style.color = "green";
+                            contactAdded.classList.remove("hidden");
+
+                            document.getElementById("addContactForm").reset();
+                            setTimeout(() => {
+                                showTable();
+                                contactAdded.classList.add("hidden");
+                            }, 2000);
+                        }
+                    }
+                    catch (parseError) {
+                        contactAdded.innerHTML = "Error adding contact: " + parseError.message;
+                        contactAdded.style.color = "red";
+                        contactAdded.classList.remove("hidden");
+                    }
+
+                }
+                else {
+                    contactAdded.innerHTML = "Error adding contact: " + this.statusText;
+                    contactAdded.style.color = "red";
+                    contactAdded.classList.remove("hidden");
+                }
             }
         };
+
         xml.send(jsonPayload);
+
     }
-    catch (err) {
-        contactAdded.innerHTML = "Error adding contact: " + err.message;
+    catch (error) {
+        contactAdded.innerHTML = "Error adding contact: " + error.message;
+        contactAdded.style.color = "red";
         contactAdded.classList.remove("hidden");
     }
 
 }
 
+async function listContacts() {
+
+    const res = await fetch(base_url + '/api/get_last_ten_contacts.php', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        contactStorage = [];
+        resultRow.innerHTML = `<tr class="errorRow"><td colspan="5">No contacts found.</td></tr>`;
+        console.log("error listing contacts: " + data.error);
+    }
+
+    contactStorage = data.results;
+    displayResults(contactStorage);
+}
+
 async function searchContact() {
     const fullSearch = document.getElementById("searchContacts").value.trim();
+    const resultRow = document.getElementById("searchResults");
 
     const FirstName = fullSearch.split(" ")[0] || "";
     const LastName = fullSearch.split(" ")[1] || "";
@@ -139,8 +282,7 @@ async function searchContact() {
         }
         else {
             contactStorage = [];
-            let errorMessage = document.getElementById("contactResultTable");
-            errorMessage.innerHTML = "<tr><td colspan='5' style='color: red; text-align: center; font-weight: bold;'>No contacts found.</td></tr>";
+            resultRow.innerHTML = `<tr class="errorRow"><td colspan="5">No contacts found.</td></tr>`;
         }
     }
     catch (error) {
@@ -149,10 +291,10 @@ async function searchContact() {
 }
 
 function displayResults(contacts) {
-    const resultTable = document.getElementById("contactResultTable");
+    const resultTable = document.getElementById("searchResults");
     resultTable.innerHTML = ""; // default blank
 
-    contacts.forEach(contact => { // contacts or contactArray??
+    contacts.forEach(contact => {
         const row = document.createElement("tr");
         row.setAttribute("id", `row-${contact.ID}`);
         row.innerHTML = getRowTemp(contact);
@@ -191,6 +333,12 @@ function editContact(contactId) {
             <button type="button" class=inlineButton onclick="cancelEdit(${contactId})" title="Cancel"><img src="../images/cancelLogo.png" alt="Cancel" style="width: 24px; height: 24px;"></button>
         </td>
     `;
+
+    const editPhone = document.getElementById(`editPhone-${contactId}`);
+
+    if (editPhone) {
+        phoneDash(editPhone);
+    }
 }
 
 async function saveContact(contactId) {
@@ -247,7 +395,7 @@ async function deleteContact(contactId) {
         return;
     }
 
-    const deleteConfirm = confirm(`Are you sure you want to delete ${contact.FirstName} ${contact.Lastname}?`);
+    const deleteConfirm = confirm(`Are you sure you want to delete ${contact.FirstName} ${contact.LastName}?`);
     if (!deleteConfirm) {
         return;
     }
@@ -272,11 +420,6 @@ async function deleteContact(contactId) {
         console.error("Error deleting contact: " + error);
     }
 }
-
-button.addEventListener("click", async function (e) {
-    e.preventDefault();
-    await logOut();
-});
 
 async function logOut() {
 
