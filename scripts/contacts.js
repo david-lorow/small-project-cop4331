@@ -100,7 +100,7 @@ function readCookie() {
     }
 
     if (userId < 0) {
-        window.location.href = "../index.html";
+        window.location.href = "../";
     }
     return [firstName, lastName, userId]
 }

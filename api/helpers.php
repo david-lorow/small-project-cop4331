@@ -86,3 +86,22 @@ function getContactInfo($ID, $UserID)
 
     return $row;
 }
+
+//Simplified contact array building and array sending into one function for the "get ten"
+function sendContactsByIDs($contacts, $UserID)
+{
+    $contactArray = [];
+
+    $idArray = $contacts["IDs"];
+    for($i = 0; $i < count($idArray); $i++)
+    {
+        $contactArray[] = getContactInfo($idArray[$i], $UserID);
+    }
+
+    http_response_code(200);
+    sendResultInfoAsJson(json_encode([
+        "results" => $contactArray,
+        "error" => ""
+    ]));
+    exit;
+}

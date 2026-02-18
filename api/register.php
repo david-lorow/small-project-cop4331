@@ -36,6 +36,20 @@ if(!$stmt->execute())
 }
 
 $newId = $conn->insert_id;
+
+//Start session only right before successful registration
+require_once __DIR__ . "/session_maker.php";
+sessionMake();
+session_start();
+session_regenerate_id(true);
+$_SESSION['UserID'] = (int)$newId;
+$_SESSION['first_name'] = $inData["FirstName"];
+$_SESSION['last_name'] = $inData["LastName"];
+$_SESSION['login'] = $login;             
+$_SESSION['logged_in_at'] = time();
+session_write_close();
+
+
 returnWithInfo($inData["FirstName"], $inData["LastName"], $newId);
 
 
